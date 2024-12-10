@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/cashier/compare/v15.5.1...15.x)
+## [Unreleased](https://github.com/laravel/cashier/compare/v15.6.0...15.x)
+
+## [v15.6.0](https://github.com/laravel/cashier/compare/v15.5.1...v15.6.0) - 2024-12-10
+
+* Added Support for New Usage Based Billing by [@Bark-fa](https://github.com/Bark-fa) in https://github.com/laravel/cashier-stripe/pull/1727
 
 ## [v15.5.1](https://github.com/laravel/cashier/compare/v15.5.0...v15.5.1) - 2024-11-26
 
