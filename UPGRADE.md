@@ -104,13 +104,13 @@ PR: https://github.com/laravel/cashier-stripe/pull/1529
 
 The `deleted` status on invoices no longer exists and therefore its corresponding method has been removed.
 
-## Upgrading To v14.12.11 from v14.12.10
+## Upgrading To 14.12.11 From 14.12.10
 
-### Remove unique index from items table
+### Remove Unique Index From Items Table
 
 PR: https://github.com/laravel/cashier-stripe/pull/1594
 
-The unique constraint on the `subscription_items` table was converted to a regular index. You can use the below migration to adjust this:
+The unique constraint on the `subscription_items` table was converted to a regular index. You can use the migration below to adjust this index on your table:
 
 ```php
 public function up()
