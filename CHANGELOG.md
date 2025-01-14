@@ -1,6 +1,11 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/cashier/compare/v15.6.0...15.x)
+## [Unreleased](https://github.com/laravel/cashier/compare/v15.6.1...15.x)
+
+## [v15.6.1](https://github.com/laravel/cashier/compare/v15.6.0...v15.6.1) - 2025-01-14
+
+* [15.x] Fix nullable invoice settings by [@driesvints](https://github.com/driesvints) in https://github.com/laravel/cashier-stripe/pull/1732
+* [15.x] Fix failing payment confirm tests by [@driesvints](https://github.com/driesvints) in https://github.com/laravel/cashier-stripe/pull/1731
 
 ## [v15.6.0](https://github.com/laravel/cashier/compare/v15.5.1...v15.6.0) - 2024-12-10
 
