@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/cashier/compare/v15.6.1...15.x)
+## [Unreleased](https://github.com/laravel/cashier/compare/v15.6.2...15.x)
+
+## [v15.6.2](https://github.com/laravel/cashier/compare/v15.6.1...v15.6.2) - 2025-01-28
+
+* Supports Laravel 12 by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/cashier-stripe/pull/1736
 
 ## [v15.6.1](https://github.com/laravel/cashier/compare/v15.6.0...v15.6.1) - 2025-01-14
 
