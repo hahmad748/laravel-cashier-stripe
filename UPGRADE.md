@@ -70,6 +70,8 @@ Schema::table('subscriptions', function (Blueprint $table) {
 });
 ```
 
+Additionally, if you're overwriting the `newSubscriptionName` method on the webhook controller, you should rename this method to `newSubscriptionType`.
+
 ### Rename Receipt To Invoice
 
 PR: https://github.com/laravel/cashier-stripe/pull/1609
