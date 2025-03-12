@@ -101,7 +101,7 @@ class WebhookController extends Controller
                 }
             }else{
                 Log::info('Going for update:', $payload);
-                $this->handleCustomerSubscriptionUpdated($payload);
+                $this->handleCustomerSubscriptionUpdated($payload, true);
             }
 
             // Terminate the billable's generic trial if it exists...
@@ -131,7 +131,7 @@ class WebhookController extends Controller
      * @param  array  $payload
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    protected function handleCustomerSubscriptionUpdated(array $payload)
+    protected function handleCustomerSubscriptionUpdated(array $payload, $ignoreStatus = true)
     {
         Log::info("handleCustomerSubscriptionUpdated", $payload);
         if ($user = $this->getUserByStripeId($payload['data']['object']['customer'])) {
@@ -180,9 +180,11 @@ class WebhookController extends Controller
                 $subscription->ends_at = null;
             }
 
-            // Status...
-            if (isset($data['status'])) {
-                $subscription->stripe_status = $data['status'];
+            if(!$ignoreStatus){
+                // Status...
+                if (isset($data['status'])) {
+                    $subscription->stripe_status = $data['status'];
+                }
             }
 
             $subscription->save();
