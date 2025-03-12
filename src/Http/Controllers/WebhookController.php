@@ -16,6 +16,7 @@ use Laravel\Cashier\Subscription;
 use Stripe\Stripe;
 use Stripe\Subscription as StripeSubscription;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Log;
 
 class WebhookController extends Controller
 {
@@ -65,6 +66,7 @@ class WebhookController extends Controller
      */
     protected function handleCustomerSubscriptionCreated(array $payload)
     {
+        Log::info('Custom Subscription Created:', $payload);
         $user = $this->getUserByStripeId($payload['data']['object']['customer']);
 
         if ($user) {
@@ -88,6 +90,7 @@ class WebhookController extends Controller
                     'quantity' => $isSinglePrice && isset($firstItem['quantity']) ? $firstItem['quantity'] : null,
                     'trial_ends_at' => $trialEndsAt,
                     'ends_at' => null,
+                    'metadata' => $data['metadata'] ?? [],
                 ]);
 
                 foreach ($data['items']['data'] as $item) {
