@@ -341,7 +341,7 @@ class WebhookController extends Controller
                         'quantity' => null,
                         'trial_ends_at' => null,
                         'ends_at' => null,
-                        'metadata' => $metaData,
+                        'metadata' => json_encode($metaData),
                     ]);
                 }else{
                     Log::info('Subscription already exist:', $data);
@@ -349,7 +349,7 @@ class WebhookController extends Controller
                     $subscription = $user->subscriptions()->where(['stripe_id' => $stripeSubscriptionId])->first();
                     if($subscription) {
                         // Save metadata correctly
-                        $subscription->metadata = $metaData;
+                        $subscription->metadata = json_encode($metaData);
                         $subscription->save();
                     }
                 }
