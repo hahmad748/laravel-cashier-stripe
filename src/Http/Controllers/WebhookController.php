@@ -66,7 +66,7 @@ class WebhookController extends Controller
      */
     protected function handleCustomerSubscriptionCreated(array $payload)
     {
-        Log::info('Custom Subscription Created:', $payload);
+        Log::info('Customer Subscription Created:', $payload);
         $user = $this->getUserByStripeId($payload['data']['object']['customer']);
 
         if ($user) {
@@ -328,14 +328,14 @@ class WebhookController extends Controller
 
             if (!empty($stripeSubscriptionId)) {
                 // Find or create a subscription entry with the correct Stripe ID
-                $subscription = $user->subscriptions()->firstOrNew(['stripe_id' => $stripeSubscriptionId]);
-
-                // Save metadata correctly
-                $subscription->metadata = json_encode($metadata); // Ensure JSON storage
-                $subscription->save();
+                $subscription = $user->subscriptions()->where(['stripe_id' => $stripeSubscriptionId])->first();
+                if($subscription) {
+                    // Save metadata correctly
+                    $subscription->metadata = $metadata;
+                    $subscription->save();
+                }
             }
         }
-
         return $this->successMethod();
     }
 
