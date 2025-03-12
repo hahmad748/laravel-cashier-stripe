@@ -90,7 +90,6 @@ class WebhookController extends Controller
                     'quantity' => $isSinglePrice && isset($firstItem['quantity']) ? $firstItem['quantity'] : null,
                     'trial_ends_at' => $trialEndsAt,
                     'ends_at' => null,
-                    'metadata' => $data['metadata'] ?? [],
                 ]);
 
                 foreach ($data['items']['data'] as $item) {
