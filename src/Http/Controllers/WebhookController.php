@@ -107,6 +107,9 @@ class WebhookController extends Controller
                         'quantity' => $item['quantity'] ?? null,
                     ]);
                 }
+            }else{
+                Log::info('Subscription already exists:', $data['id']);
+                $this->handleCustomerSubscriptionUpdated($payload);
             }
 
             // Terminate the billable's generic trial if it exists...
@@ -333,14 +336,27 @@ class WebhookController extends Controller
             $metadata = $data['metadata'] ?? [];
 
             if (!empty($stripeSubscriptionId)) {
-                // Find or create a subscription entry with the correct Stripe ID
-                $subscription = $user->subscriptions()->where(['stripe_id' => $stripeSubscriptionId])->first();
-                if($subscription) {
-                    // Save metadata correctly
-                    $subscription->metadata = $metadata;
-                    $subscription->save();
+
+                if(!$user->subscriptions->contains('stripe_id', $data['id'])){
+                    // Create a new subscription entry
+                    $subscription = $user->subscriptions()->create([
+                        'type' => $metadata['type'] ?? $metadata['name'] ?? $this->newSubscriptionType($payload),
+                        'stripe_id' => $stripeSubscriptionId,
+                        'stripe_status' => $data['status'],
+                        'stripe_price' => null,
+                        'quantity' => null,
+                        'trial_ends_at' => null,
+                        'ends_at' => null,
+                        'metadata' => $metadata,
+                    ]);
                 }else{
-                    $this->handleCustomerSubscriptionCreated($payload);
+                    // Find or create a subscription entry with the correct Stripe ID
+                    $subscription = $user->subscriptions()->where(['stripe_id' => $stripeSubscriptionId])->first();
+                    if($subscription) {
+                        // Save metadata correctly
+                        $subscription->metadata = $metadata;
+                        $subscription->save();
+                    }
                 }
             }
         }
