@@ -87,7 +87,7 @@ class WebhookController extends Controller
                     $metaData = json_encode($metaData);
                 }
 
-
+                Log::info('Creating new Subscription:', $payload);
                 $subscription = $user->subscriptions()->create([
                     'type' => $data['metadata']['type'] ?? $data['metadata']['name'] ?? $this->newSubscriptionType($payload),
                     'stripe_id' => $data['id'],
@@ -96,7 +96,7 @@ class WebhookController extends Controller
                     'quantity' => $isSinglePrice && isset($firstItem['quantity']) ? $firstItem['quantity'] : null,
                     'trial_ends_at' => $trialEndsAt,
                     'ends_at' => null,
-                    'metadata' => $metaData,
+                    'metadata' => isset($metaData['plan']) ? $metaData : [],
                 ]);
 
                 foreach ($data['items']['data'] as $item) {
@@ -108,7 +108,7 @@ class WebhookController extends Controller
                     ]);
                 }
             }else{
-                Log::info('Subscription already exists:', $data['id']);
+                Log::info('Subscription already exists going for update:', $data['id']);
                 $this->handleCustomerSubscriptionUpdated($payload);
             }
 
@@ -333,28 +333,34 @@ class WebhookController extends Controller
 
         if ($user) {
             $stripeSubscriptionId = $data['subscription']; // Get the actual subscription ID
-            $metadata = $data['metadata'] ?? [];
+            $metaData = $data['metadata'] ?? [];
+            // if metadata is not string, convert it to string
+            if (!is_string($metaData)) {
+                $metaData = json_encode($metaData);
+            }
+
 
             if (!empty($stripeSubscriptionId)) {
-
                 if(!$user->subscriptions->contains('stripe_id', $data['id'])){
+                    Log::info('Subscription does not exist:', $data['id']);
                     // Create a new subscription entry
                     $subscription = $user->subscriptions()->create([
-                        'type' => $metadata['type'] ?? $metadata['name'] ?? $this->newSubscriptionType($payload),
+                        'type' => $data['metadata']['type'] ?? $data['metadata']['name'] ?? $this->newSubscriptionType($payload),
                         'stripe_id' => $stripeSubscriptionId,
                         'stripe_status' => $data['status'],
                         'stripe_price' => null,
                         'quantity' => null,
                         'trial_ends_at' => null,
                         'ends_at' => null,
-                        'metadata' => $metadata,
+                        'metadata' => $metaData,
                     ]);
                 }else{
+                    Log::info('Subscription already exist:', $data['id']);
                     // Find or create a subscription entry with the correct Stripe ID
                     $subscription = $user->subscriptions()->where(['stripe_id' => $stripeSubscriptionId])->first();
                     if($subscription) {
                         // Save metadata correctly
-                        $subscription->metadata = $metadata;
+                        $subscription->metadata = $metaData;
                         $subscription->save();
                     }
                 }
