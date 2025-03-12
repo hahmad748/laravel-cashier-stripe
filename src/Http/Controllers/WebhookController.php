@@ -41,7 +41,7 @@ class WebhookController extends Controller
     public function handleWebhook(Request $request)
     {
         $payload = json_decode($request->getContent(), true);
-        $method = 'handle'.Str::studly(str_replace('.', '_', $payload['type']));
+        $method = 'handle' . Str::studly(str_replace('.', '_', $payload['type']));
 
         WebhookReceived::dispatch($payload);
 
@@ -309,6 +309,30 @@ class WebhookController extends Controller
                 ));
 
                 $user->notify(new $notification($payment));
+            }
+        }
+
+        return $this->successMethod();
+    }
+
+    protected function handleCheckoutSessionCompleted(array $payload)
+    {
+        Log::info('Checkout Session Completed:', $payload);
+
+        $data = $payload['data']['object'];
+        $user = $this->getUserByStripeId($data['customer']);
+
+        if ($user) {
+            $stripeSubscriptionId = $data['subscription']; // Get the actual subscription ID
+            $metadata = $data['metadata'] ?? [];
+
+            if (!empty($stripeSubscriptionId)) {
+                // Find or create a subscription entry with the correct Stripe ID
+                $subscription = $user->subscriptions()->firstOrNew(['stripe_id' => $stripeSubscriptionId]);
+
+                // Save metadata correctly
+                $subscription->metadata = json_encode($metadata); // Ensure JSON storage
+                $subscription->save();
             }
         }
 
