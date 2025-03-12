@@ -81,6 +81,12 @@ class WebhookController extends Controller
 
                 $firstItem = $data['items']['data'][0];
                 $isSinglePrice = count($data['items']['data']) === 1;
+                $metaData = $data['metadata'] ?? [];
+                // if metadata is not string, convert it to string
+                if (!is_string($metaData)) {
+                    $metaData = json_encode($metaData);
+                }
+
 
                 $subscription = $user->subscriptions()->create([
                     'type' => $data['metadata']['type'] ?? $data['metadata']['name'] ?? $this->newSubscriptionType($payload),
@@ -90,6 +96,7 @@ class WebhookController extends Controller
                     'quantity' => $isSinglePrice && isset($firstItem['quantity']) ? $firstItem['quantity'] : null,
                     'trial_ends_at' => $trialEndsAt,
                     'ends_at' => null,
+                    'metadata' => $metaData,
                 ]);
 
                 foreach ($data['items']['data'] as $item) {
@@ -332,6 +339,8 @@ class WebhookController extends Controller
                     // Save metadata correctly
                     $subscription->metadata = $metadata;
                     $subscription->save();
+                }else{
+                    $this->handleCustomerSubscriptionCreated($payload);
                 }
             }
         }
