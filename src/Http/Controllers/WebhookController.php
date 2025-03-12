@@ -332,7 +332,7 @@ class WebhookController extends Controller
 
 
             if (!empty($stripeSubscriptionId)) {
-                if(!$user->subscriptions->contains('stripe_id', $data['id'])){
+                if(!$user->subscriptions->contains('stripe_id', $stripeSubscriptionId)){
                     Log::info('Subscription does not exist:', $data);
                     // Create a new subscription entry
                     $subscription = $user->subscriptions()->create([
